@@ -2,11 +2,20 @@
  * Program entry point
  * */
 
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.util.JSON;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.streaming.Duration;
+import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.twitter.*;
+import org.bson.Document;
+import twitter4j.Status;
 import twitter4j.TwitterObjectFactory;
 import twitter4j.auth.Authorization;
 import twitter4j.auth.AuthorizationFactory;
@@ -23,9 +32,21 @@ public class TwitterCommunityDetection {
         Authorization twitterAuth = AuthorizationFactory.getInstance(twitterConf);
 
         String[] filters = { "obama", "trump" };
-        TwitterUtils.createStream(jssc, twitterAuth, filters).map(
-            s -> TwitterObjectFactory.getRawJSON(s)
-        ).print();
+
+        JavaReceiverInputDStream<Status> twitterStream = TwitterUtils.createStream(jssc, twitterAuth, filters);
+        twitterStream.foreachRDD( s -> {
+            s.foreachPartition( p -> {
+                MongoClient client = new MongoClient(new MongoClientURI("mongodb://host:27017"));
+                MongoDatabase database = client.getDatabase("db_name");
+                MongoCollection<Document> collection = database.getCollection("coll_name");
+                while(p.hasNext()) {
+                    Status i = p.next();
+                    Document doc = Document.parse(TwitterObjectFactory.getRawJSON(i));
+                    collection.insertOne(doc);
+                }
+                client.close();
+            });
+        });
         jssc.start();
         jssc.awaitTermination();
     }
