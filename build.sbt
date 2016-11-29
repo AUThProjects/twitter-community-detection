@@ -8,8 +8,13 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "1.6.2" % "provided",
   "org.apache.spark" %% "spark-sql" % "1.6.2" % "provided",
   "org.apache.spark" %% "spark-streaming" % "1.6.2" % "provided",
-  "org.apache.spark" %% "spark-streaming-twitter" % "1.6.2" % "provided",
+  "org.apache.spark" %% "spark-streaming-twitter" % "1.6.2",
   "org.twitter4j" % "twitter4j-stream" % "4.0.5",
   "net.liftweb" %% "lift-json" % "2.6.3",
   "com.github.nscala-time" %% "nscala-time" % "2.12.0"
 )
+
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case x => MergeStrategy.last
+}
