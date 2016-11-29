@@ -19,10 +19,9 @@ public class TwitterCommunityDetection {
         Configuration twitterConf = ConfigurationContext.getInstance();
         Authorization twitterAuth = AuthorizationFactory.getInstance(twitterConf);
         String[] filters = { "obama", "trump" };
-        TwitterUtils.createStream(jssc, twitterAuth, filters).map ( s -> {
-            System.out.println(s.getUser().toString() + ": " + s.getText().toString());
-            return null;
-        });
+        TwitterUtils.createStream(jssc, twitterAuth, filters).map(
+            s -> s.getUser().toString() + ": " + s.getText().toString()
+        ).print();
         jssc.start();
         jssc.awaitTermination();
     }
