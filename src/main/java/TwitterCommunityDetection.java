@@ -16,9 +16,7 @@ import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.twitter.*;
 import org.bson.Document;
-import twitter4j.JSONObject;
-import twitter4j.Status;
-import twitter4j.TwitterObjectFactory;
+import twitter4j.*;
 import twitter4j.auth.Authorization;
 import twitter4j.auth.AuthorizationFactory;
 import twitter4j.conf.Configuration;
@@ -26,11 +24,11 @@ import twitter4j.conf.ConfigurationContext;
 
 import javax.xml.crypto.Data;
 import java.io.Console;
+import java.util.ArrayList;
 
 
 public class TwitterCommunityDetection {
     public static void main(String[] args) {
-        Database db = new Database();
         Logger logger = Logger.getLogger(TwitterCommunityDetection.class.getClass());
         ObjectMapper mapper = new ObjectMapper();
 
@@ -39,9 +37,17 @@ public class TwitterCommunityDetection {
         Configuration twitterConf = ConfigurationContext.getInstance();
         Authorization twitterAuth = AuthorizationFactory.getInstance(twitterConf);
 
-        String[] filters = { "obama", "trump" };
+        String[] trends = getTrends(twitterConf);
+        if (trends == null) {
+            // Exceeded quota
+            System.exit(-1);
+        }
 
-        JavaReceiverInputDStream<Status> twitterStream = TwitterUtils.createStream(jssc, twitterAuth, filters);
+        JavaReceiverInputDStream<Status> twitterStream = TwitterUtils.createStream(
+                jssc,
+                twitterAuth,
+                trends);
+
         twitterStream.foreachRDD( s -> {
             s.foreachPartition( p -> {
                 MongoClient client = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
@@ -58,5 +64,26 @@ public class TwitterCommunityDetection {
         });
         jssc.start();
         jssc.awaitTermination();
+    }
+
+    public static String[] getTrends(Configuration twitterConf) {
+        TwitterFactory tf = new TwitterFactory(twitterConf);
+        Twitter twitter = tf.getInstance();
+        try {
+            // 44418 is London
+            // 1 is supposed to be global but gives crappy hashtags, including RTL, japanese, etc.
+            // Instead of this, we can use
+            // twitter.getAvailableTrends() which gives us a list of Locations, from which we can pick woeid's.
+            Trend[] trends = twitter.getPlaceTrends(44418).getTrends();
+            String[] sTrends = new String[trends.length];
+            for (int i=0; i< trends.length; ++i) {
+                sTrends[i] = trends[i].getName();
+            }
+            return sTrends;
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
     }
 }

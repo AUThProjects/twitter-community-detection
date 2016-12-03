@@ -15,3 +15,8 @@ hs_err_pid*
 target/*
 # This file contains twitter tokens
 src/main/resources/twitter4j.properties
+
+.idea/*
+project/target/*
+project/project/*
+project/.idea/*
