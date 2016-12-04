@@ -3,12 +3,10 @@
  * */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.util.JSON;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.streaming.Duration;
@@ -16,16 +14,14 @@ import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.twitter.*;
 import org.bson.Document;
-import twitter4j.*;
+import twitter4j.Status;
+import twitter4j.Trend;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
 import twitter4j.auth.Authorization;
 import twitter4j.auth.AuthorizationFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationContext;
-
-import javax.xml.crypto.Data;
-import java.io.Console;
-import java.util.ArrayList;
-
 
 public class TwitterCommunityDetection {
     public static void main(String[] args) {
@@ -37,7 +33,8 @@ public class TwitterCommunityDetection {
         Configuration twitterConf = ConfigurationContext.getInstance();
         Authorization twitterAuth = AuthorizationFactory.getInstance(twitterConf);
 
-        String[] trends = getTrends(twitterConf);
+//        String[] trends = getTrends(twitterConf);
+        String[] trends = { "#trump", "#obama", "#brexit", "#italyreferendum", "#Austrianelection" };
         if (trends == null) {
             // Exceeded quota
             System.exit(-1);
@@ -74,7 +71,7 @@ public class TwitterCommunityDetection {
             // 1 is supposed to be global but gives crappy hashtags, including RTL, japanese, etc.
             // Instead of this, we can use
             // twitter.getAvailableTrends() which gives us a list of Locations, from which we can pick woeid's.
-            Trend[] trends = twitter.getPlaceTrends(44418).getTrends();
+            Trend[] trends = twitter.getPlaceTrends(23424833).getTrends();
             String[] sTrends = new String[trends.length];
             for (int i=0; i< trends.length; ++i) {
                 sTrends[i] = trends[i].getName();
