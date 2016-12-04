@@ -7,6 +7,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.streaming.Duration;
@@ -59,8 +60,13 @@ public class TwitterCommunityDetection {
                 client.close();
             });
         });
-        jssc.start();
-        jssc.awaitTermination();
+        try {
+            jssc.start();
+            jssc.awaitTermination();
+        }
+        catch (Exception e) {
+            logger.log(Level.ERROR, e.getMessage());
+        }
     }
 
     public static String[] getTrends(Configuration twitterConf) {
