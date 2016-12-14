@@ -13,3 +13,11 @@
 * [Twitter REST API](https://dev.twitter.com/rest/public)
   * [Trending topics](https://dev.twitter.com/rest/reference/get/trends/place)
 * [Twitter Streaming API](https://dev.twitter.com/streaming/public)
+
+## mongodb
+
+Mongo db aggregate query:
+
+```
+aggregate { aggregate: "tweets", pipeline: [ { $match: { retweetedStatus: { $exists: true, $ne: null } } }, { $project: { tweetId: "$retweetedStatus.id", userId: "$user.id" } }, { $sort: { tweetId: -1.0 } } ], cursor: {} }
+```
