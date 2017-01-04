@@ -12,7 +12,8 @@ libraryDependencies ++= Seq(
   "org.twitter4j" % "twitter4j-stream" % "4.0.5",
   "org.mongodb" % "mongodb-driver" % "3.4.0",
   "net.liftweb" %% "lift-json" % "2.6.3",
-  "com.github.nscala-time" %% "nscala-time" % "2.12.0"
+  "com.github.nscala-time" %% "nscala-time" % "2.12.0",
+  "org.mongodb.spark" %% "mongo-spark-connector" % "2.0.0"
 )
 
 assemblyMergeStrategy in assembly := {
