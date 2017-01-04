@@ -1,6 +1,4 @@
-CREATE DATABASE twitterDB;
-
-USE DATABASE twitterDB;
+USE DATABASE twitterdb;
 
 CREATE TABLE user_hashtag(
   id serial primary key,
