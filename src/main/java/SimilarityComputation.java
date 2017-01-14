@@ -4,6 +4,8 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.Math.sqrt;
+
 /**
  * Created by anagnoad on 04-Jan-17.
  */
@@ -33,14 +35,23 @@ public class SimilarityComputation {
             int totalHashtags = rs.getInt("count");
             System.out.println(totalHashtags);
             stmt = connection.createStatement();
-            String sql = "SELECT uid, count(hashtag) FROM user_hashtag GROUP BY uid";
+            String sql = "select hashtag, uid, count(uid) as countrow from user_hashtag group by hashtag, uid order by uid";
             rs = stmt.executeQuery(sql);
+            double acc = 0;
+            String previousUid = "";
             while (rs.next()) {
                 String uid = rs.getString("uid");
-                int count = rs.getInt("count");
-//                System.out.println(uid + " " + count);
-                double magnitude = count * 1.0 / totalHashtags;
-                magnitudes.put(uid, magnitude);
+                int count = rs.getInt("countrow");
+
+
+                if (previousUid == uid || previousUid == "") {
+                    acc += Math.pow(count,2);
+                }
+                else {
+                    magnitudes.put(uid, sqrt(acc));
+                    acc = 0;
+                }
+                previousUid = uid;
             }
 //            System.out.println(magnitudes.size());
 
@@ -67,7 +78,7 @@ public class SimilarityComputation {
 
             String uid1 = "";
             String uid2 = "";
-            int acc = 0;
+            acc = 0;
             while (rs.next()) {
                String nextUid1 = rs.getString("uid1");
                String nextUid2 = rs.getString("uid2");
@@ -77,7 +88,7 @@ public class SimilarityComputation {
 //                    System.out.println(entry.getKey() + "," + entry.getValue());
 //                }
 
-                if (nextUid2 != uid2 || nextUid1 != uid1) {
+                if ((uid1 != "" && uid2 != "") && (nextUid2 != uid2 || nextUid1 != uid1)) {
                     similarities.put(new Tuple2<>(uid1, uid2), (double) acc/(magnitudes.get(nextUid1) * magnitudes.get(nextUid2)));
                     acc = 0;
                 }
