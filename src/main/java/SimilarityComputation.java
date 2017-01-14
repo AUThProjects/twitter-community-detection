@@ -16,6 +16,7 @@ public class SimilarityComputation {
         computeCosineSimilarity("url", "url");
         computeCosineSimilarity("retweet_id", "retweet");
         computeCosineSimilarity("mention_id", "mention");
+        computeAvgSimilarityMatrix();
     }
 
     public static void computeCosineSimilarity(String column, String field) {
@@ -86,7 +87,7 @@ public class SimilarityComputation {
                 String nextUid2 = rs.getString("uid2");
 
                 if ((uid1 != "" && uid2 != "") && (!nextUid2.equals(uid2) || !nextUid1.equals(uid1))) {
-                    similarities.put(new Tuple2<>(uid1, uid2), (double) acc/(magnitudes.get(nextUid1) * magnitudes.get(nextUid2)));
+                    similarities.put(new Tuple2<>(uid1, uid2), (double) acc/(magnitudes.get(uid1) * magnitudes.get(uid2)));
                     acc = 0;
                 }
 
@@ -103,6 +104,60 @@ public class SimilarityComputation {
                 String insertSimilarity = String.format("INSERT INTO cosine_similarity_%4$s(uid_r,uid_c,similarity) VALUES(%s, %s, %f)", entry.getKey()._1(), entry.getKey()._2(), entry.getValue(), field);
                 stmt.executeUpdate(insertSimilarity);
             }
+        }
+        catch(SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        finally {
+            try {
+                connection.close();
+            }
+            catch (SQLException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
+    public static void computeAvgSimilarityMatrix() {
+        String[] simTables = {"cosine_similarity_hashtag", "cosine_similarity_url", "cosine_similarity_mention", "cosine_similarity_retweet"};
+        try {
+            Class.forName("org.postgresql.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            System.out.println(e);
+            return;
+        }
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(
+                    "jdbc:postgresql://localhost:5432/twitterdb", "twitteruser", "twitterpass");
+
+            for (String table : simTables) {
+                Statement stmt = connection.createStatement();
+                stmt = connection.createStatement();
+                String sql = String.format("select * from %s", table);
+                ResultSet rs = stmt.executeQuery(sql);
+
+                while (rs.next()) {
+                    String uid1 = rs.getString(0);
+                    String uid2 = rs.getString(1);
+                    double similarity = 0.25 * rs.getDouble(2);
+                    Statement inner_stmt = connection.createStatement();
+                    String retrieve_sql = String.format("select * from cosine_similarity where uid_r = '%s' and uid_c = '%s'", uid1, uid2);
+                    ResultSet retrieved = inner_stmt.executeQuery(retrieve_sql);
+                    if (retrieved.next()) {
+                        double oldSimilarity = retrieved.getDouble(2);
+                        double newSimilarity = oldSimilarity + similarity;
+                        String updateSql = String.format("update cosine_similarity set similarity=%f where uid_r = '%s' and uid_c = '%s'", newSimilarity, uid1, uid2);
+                        inner_stmt.executeQuery(updateSql);
+                    }
+                    else {
+                        String updateSql = String.format("insert into cosine_similarity(uid_r, uid_c, similarity) values(%s, %s, %f)", uid1, uid2, similarity);
+                        inner_stmt.executeQuery(updateSql);
+                    }
+                }
+            }
+
         }
         catch(SQLException e) {
             System.err.println(e.getMessage());
