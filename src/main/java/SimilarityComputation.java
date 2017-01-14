@@ -104,7 +104,7 @@ public class SimilarityComputation {
 
             for (Map.Entry<Tuple2<String, String>, Double> entry: similarities.entrySet()) {
                 stmt = connection.createStatement();
-                String insertSimilarity = String.format("INSERT INTO cosine_similarity_%3$s(uid_r,uid_c,similarity) VALUES(%s, %s, %f)", entry.getKey()._1(), entry.getKey()._2(), entry.getValue(), table);
+                String insertSimilarity = String.format("INSERT INTO cosine_similarity_%4$s(uid_r,uid_c,similarity) VALUES(%s, %s, %f)", entry.getKey()._1(), entry.getKey()._2(), entry.getValue(), table);
                 stmt.executeUpdate(insertSimilarity);
             }
         }
