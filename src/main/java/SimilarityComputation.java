@@ -12,13 +12,14 @@ import static java.lang.Math.sqrt;
 public class SimilarityComputation {
 
     public static void main (String[] args) {
-        computeCosineSimilarity("hashtag", "user_hashtag");
-        computeCosineSimilarity("url", "user_url");
-        computeCosineSimilarity("retweet_id", "user_retweet");
-        computeCosineSimilarity("mention_id", "user_mention");
+        computeCosineSimilarity("hashtag", "hashtag");
+        computeCosineSimilarity("url", "url");
+        computeCosineSimilarity("retweet_id", "retweet");
+        computeCosineSimilarity("mention_id", "mention");
     }
 
-    public static void computeCosineSimilarity(String column, String table) {
+    public static void computeCosineSimilarity(String column, String field) {
+        String table = "user_"+field;
 
         HashMap<String, Double> magnitudes = new HashMap<>();
         HashMap<Tuple2<String, String>, Double> similarities = new HashMap<>();
@@ -104,7 +105,7 @@ public class SimilarityComputation {
 
             for (Map.Entry<Tuple2<String, String>, Double> entry: similarities.entrySet()) {
                 stmt = connection.createStatement();
-                String insertSimilarity = String.format("INSERT INTO cosine_similarity_%4$s(uid_r,uid_c,similarity) VALUES(%s, %s, %f)", entry.getKey()._1(), entry.getKey()._2(), entry.getValue(), table);
+                String insertSimilarity = String.format("INSERT INTO cosine_similarity_%4$s(uid_r,uid_c,similarity) VALUES(%s, %s, %f)", entry.getKey()._1(), entry.getKey()._2(), entry.getValue(), field);
                 stmt.executeUpdate(insertSimilarity);
             }
         }
