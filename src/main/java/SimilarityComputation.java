@@ -39,6 +39,7 @@ public class SimilarityComputation {
             Statement stmt = connection.createStatement();
             stmt = connection.createStatement();
             String sql = String.format("select %1$s, uid, count(uid) as countrow from %2$s group by %1$s, uid order by uid", column, table);
+            System.out.println(sql);
             ResultSet rs = stmt.executeQuery(sql);
             double acc = 0;
             String previousUid = "";
@@ -75,6 +76,7 @@ public class SimilarityComputation {
                     "  where uh1.uid < uh2.uid\n" +
                     "  order by uh1.uid asc, uh2.uid asc\n" +
                     ") as q\n", table, column);
+            System.out.println(similarSql);
             stmt = connection.createStatement();
             rs = stmt.executeQuery(similarSql);
 
@@ -106,6 +108,7 @@ public class SimilarityComputation {
             for (Map.Entry<Tuple2<String, String>, Double> entry: similarities.entrySet()) {
                 stmt = connection.createStatement();
                 String insertSimilarity = String.format("INSERT INTO cosine_similarity_%4$s(uid_r,uid_c,similarity) VALUES(%s, %s, %f)", entry.getKey()._1(), entry.getKey()._2(), entry.getValue(), field);
+                System.out.println(insertSimilarity);
                 stmt.executeUpdate(insertSimilarity);
             }
         }
