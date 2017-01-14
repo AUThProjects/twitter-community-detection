@@ -48,16 +48,16 @@ public class SimilarityComputation {
                 int count = rs.getInt("countrow");
 
 
-                if (previousUid == uid || previousUid == "") {
+                if (previousUid.equals(uid) || previousUid == "") {
                     acc += Math.pow(count,2);
                 }
                 else {
-                    magnitudes.put(uid, sqrt(acc));
-                    acc = 0;
+                    magnitudes.put(previousUid, sqrt(acc));
+                    acc = Math.pow(count,2);
                 }
                 previousUid = uid;
             }
-//            System.out.println(magnitudes.size());
+            magnitudes.put(previousUid, sqrt(acc));
 
             String similarSql = String.format("select uid1, uid2, %2$s, user1_%2$s_count, user2_%2$s_count\n" +
                     "from (\n" +
@@ -86,13 +86,8 @@ public class SimilarityComputation {
             while (rs.next()) {
                 String nextUid1 = rs.getString("uid1");
                 String nextUid2 = rs.getString("uid2");
-//                System.out.println(nextUid1 + " " + nextUid2);
-//                System.out.println(magnitudes.get(nextUid1));
-//                for (Map.Entry<String, Double> entry: magnitudes.entrySet()) {
-//                    System.out.println(entry.getKey() + "," + entry.getValue());
-//                }
 
-                if ((uid1 != "" && uid2 != "") && (nextUid2 != uid2 || nextUid1 != uid1)) {
+                if ((uid1 != "" && uid2 != "") && (!nextUid2.equals(uid2) || !nextUid1.equals(uid1))) {
                     similarities.put(new Tuple2<>(uid1, uid2), (double) acc/(magnitudes.get(nextUid1) * magnitudes.get(nextUid2)));
                     acc = 0;
                 }
