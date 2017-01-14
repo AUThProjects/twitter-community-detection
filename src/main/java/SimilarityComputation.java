@@ -139,14 +139,14 @@ public class SimilarityComputation {
                 ResultSet rs = stmt.executeQuery(sql);
 
                 while (rs.next()) {
-                    String uid1 = rs.getString(0);
-                    String uid2 = rs.getString(1);
-                    double similarity = 0.25 * rs.getDouble(2);
+                    String uid1 = rs.getString(1);
+                    String uid2 = rs.getString(2);
+                    double similarity = 0.25 * rs.getDouble(3);
                     Statement inner_stmt = connection.createStatement();
                     String retrieve_sql = String.format("select * from cosine_similarity where uid_r = '%s' and uid_c = '%s'", uid1, uid2);
                     ResultSet retrieved = inner_stmt.executeQuery(retrieve_sql);
                     if (retrieved.next()) {
-                        double oldSimilarity = retrieved.getDouble(2);
+                        double oldSimilarity = retrieved.getDouble(3);
                         double newSimilarity = oldSimilarity + similarity;
                         String updateSql = String.format("update cosine_similarity set similarity=%f where uid_r = '%s' and uid_c = '%s'", newSimilarity, uid1, uid2);
                         inner_stmt.executeQuery(updateSql);
