@@ -57,12 +57,12 @@ public class SimilarityComputation {
                     acc += count;
                 }
                 else {
-                    cardinalities.put(previousUid, sqrt(acc));
+                    cardinalities.put(previousUid, acc);
                     acc = count;
                 }
                 previousUid = uid;
             }
-            cardinalities.put(previousUid, sqrt(acc));
+            cardinalities.put(previousUid, acc);
 
             String similarSql = String.format("select uid1, uid2, %2$s, user1_%2$s_count, user2_%2$s_count\n" +
                     "from (\n" +
