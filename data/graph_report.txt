@@ -1,0 +1,24 @@
+# cosine_url
+* Network Diameter: 3
+* Graph density: 0.445
+* Avg Clustering Coefficient: 0.993
+
+# cosine_retweet
+* Network Diameter: 3
+* Graph density: 0.445
+* Avg Clustering Coefficient: 0.993
+
+# cosine_hashtag
+* Network Diameter: 3
+* Graph density: 0.445
+* Avg Clustering Coefficient: 0.993
+
+# cosine_mention
+* Network Diameter: 3
+* Graph density: 0.445
+* Avg Clustering Coefficient: 0.993
+
+# cosine
+* Network Diameter: 3
+* Graph density: 0.445
+* Avg Clustering Coefficient: 0.993
