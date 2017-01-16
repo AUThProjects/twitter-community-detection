@@ -42,7 +42,9 @@ public class MongoToPostgres {
                 List<Document> urls = (List<Document>)document.get("urlentities");
                 List<String> urlsText = new ArrayList<>();
                 for(Document u : urls) {
-                    urlsText.add(u.getString("url").toLowerCase());
+                    String expanded_url = u.getString("expandedURL");
+                    if (!expanded_url.isEmpty())
+                        urlsText.add(expanded_url.toLowerCase());
                 }
 
                 List<Document> mentions = (List<Document>)document.get("userMentionEntities");
