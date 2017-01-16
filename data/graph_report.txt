@@ -19,6 +19,31 @@
 * Avg Clustering Coefficient: 0.963
 
 # cosine
+* Network Diameter: 
+* Graph density: 
+* Avg Clustering Coefficient: 
+
+# jaccard_url
 * Network Diameter: 3
-* Graph density: 0.445
-* Avg Clustering Coefficient: 0.993
+* Graph density: 0.052
+* Avg Clustering Coefficient: 0.969
+
+# jaccard_retweet
+* Network Diameter: 3
+* Graph density: 0.018
+* Avg Clustering Coefficient: 0.96
+
+# jaccard_hashtag
+* Network Diameter: 4
+* Graph density: 0.37
+* Avg Clustering Coefficient: 0.948
+
+# jaccard_mention
+* Network Diameter: 6
+* Graph density: 0.019
+* Avg Clustering Coefficient: 0.963
+
+# jaccard
+* Network Diameter: 
+* Graph density: 
+* Avg Clustering Coefficient: 
