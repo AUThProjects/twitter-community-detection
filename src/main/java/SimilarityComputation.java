@@ -16,6 +16,10 @@ public class SimilarityComputation {
         computeCosineSimilarity("url", "url");
         computeCosineSimilarity("retweet_id", "retweet");
         computeCosineSimilarity("mention_id", "mention");
+        computeJaccardSimilarity("hashtag", "hashtag");
+        computeJaccardSimilarity("url", "url");
+        computeJaccardSimilarity("retweet_id", "retweet");
+        computeJaccardSimilarity("mention_id", "mention");
         computeAvgSimilarityMatrix("cosine");
         computeAvgSimilarityMatrix("jaccard");
     }
