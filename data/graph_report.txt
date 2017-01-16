@@ -19,9 +19,9 @@
 * Avg Clustering Coefficient: 0.963
 
 # cosine
-* Network Diameter: 
-* Graph density: 
-* Avg Clustering Coefficient: 
+* Network Diameter: 5
+* Graph density: 0.295
+* Avg Clustering Coefficient: 0.946
 
 # jaccard_url
 * Network Diameter: 3
@@ -44,6 +44,6 @@
 * Avg Clustering Coefficient: 0.963
 
 # jaccard
-* Network Diameter: 
-* Graph density: 
-* Avg Clustering Coefficient: 
+* Network Diameter: 6
+* Graph density: 0.096
+* Avg Clustering Coefficient: 0.245
