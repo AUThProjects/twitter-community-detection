@@ -24,9 +24,9 @@ import twitter4j.auth.AuthorizationFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationContext;
 
-public class TwitterCommunityDetection {
+public class TwitterDataCollection {
     public static void main(String[] args) {
-        Logger logger = Logger.getLogger(TwitterCommunityDetection.class.getClass());
+        Logger logger = Logger.getLogger(TwitterDataCollection.class.getClass());
         ObjectMapper mapper = new ObjectMapper();
 
         SparkConf conf = new SparkConf().setMaster("local[*]").setAppName("TwitterStreamingInput");
