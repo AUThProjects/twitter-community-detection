@@ -13,7 +13,7 @@ import static org.apache.commons.collections.CollectionUtils.intersection;
  */
 public class NMIComputation {
     public static void main(String[] args) {
-        String[] fields = {"hashtag", "url", "mention", "retweet"};
+        String[] fields = {"hashtag", "url", "mention", "retweet", "all"};
         String[] similarityMetrics = {"cosine", "jaccard"};
         String inputPrefix = "../../data/modularities/";
 
@@ -46,16 +46,17 @@ public class NMIComputation {
                     ij.retainAll(jDistinct);
                     int Nij = ij.size();
                     int Nj = jDistinct.size();
-                    accNumerator += Nij*Math.log(Nij*N/(Ni*Nj));
+                    if (Nij!=0)
+                        accNumerator += Nij*Math.log((double)Nij*N/(Ni*Nj));
                 }
-                accDenominatorA += Ni*Math.log(Ni/N);
+                accDenominatorA += Ni*Math.log((double)Ni/N);
             }
 
             for(Map.Entry<Integer, ArrayList<String>> j : cB.entrySet()) {
                 HashSet<String> jDistinct = new HashSet<>();
                 jDistinct.addAll(j.getValue());
                 int Nj = jDistinct.size();
-                accDenominatorB += Nj*Math.log(Nj/N);
+                accDenominatorB += Nj*Math.log((double) Nj/N);
             }
             // compare graphs for specific field (compute NMI)
             double nmi = -2*accNumerator/(accDenominatorA+accDenominatorB);
