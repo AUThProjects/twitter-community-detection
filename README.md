@@ -27,10 +27,12 @@ The goal of this project is to find communities of users with common traits and 
 git clone https://github.com/authprojects/twitter-community-detection.git
 cd twitter-community-detection/
 
+# Enter database credentials in src/main/resources/config.properties
+# Enter twitter data in src/main/resources/twitter4j.properties
+
 # Build solution jar
 sbt assembly
 
-# Enter twitter data in src/main/resources/twitter4j.properties
 
 # Gather tweets from Streaming API
 spark-submit target/scala-2.11/twitter-community-detection-assembly-1.0.jar --class TwitterDataCollection
