@@ -3,6 +3,7 @@ import scala.Tuple2;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import static java.lang.Math.sqrt;
 
@@ -10,6 +11,8 @@ import static java.lang.Math.sqrt;
  * Created by anagnoad on 04-Jan-17.
  */
 public class SimilarityComputation {
+
+    static Properties props = Utilities.loadProperties("config.properties");
 
     public static void main (String[] args) {
         computeCosineSimilarity("hashtag", "hashtag");
@@ -40,7 +43,8 @@ public class SimilarityComputation {
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/twitterdb", "twitteruser", "twitterpass");
+                    String.format("jdbc:%s/%s", props.getProperty("postgres_endpoint"), props.getProperty("postgres_database")),
+                    props.getProperty("postgres_user"), props.getProperty("postgres_password"));
 
             Statement stmt = connection.createStatement();
             stmt = connection.createStatement();

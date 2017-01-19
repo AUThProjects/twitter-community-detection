@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
@@ -20,11 +21,12 @@ import static com.mongodb.client.model.Projections.include;
  * Created by anagnoad on 04-Jan-17.
  */
 public class MongoToPostgres {
+    static Properties props = Utilities.loadProperties("config.properties");
 
     public static void main(String[] args) {
-        MongoClient client = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
-        MongoDatabase database = client.getDatabase("twitterDB");
-        MongoCollection<Document> collection = database.getCollection("tweets");
+        MongoClient client = new MongoClient(new MongoClientURI(props.getProperty("mongo_endpoint")));
+        MongoDatabase database = client.getDatabase(props.getProperty("mongo_database"));
+        MongoCollection<Document> collection = database.getCollection(props.getProperty("mongo_collection"));
 
         Block<Document> convertBlock = new Block<Document>() {
             @Override
@@ -74,7 +76,8 @@ public class MongoToPostgres {
                 Connection connection = null;
                 try {
                     connection = DriverManager.getConnection(
-                            "jdbc:postgresql://localhost:5432/twitterdb", "twitteruser", "twitterpass");
+                            String.format("jdbc:%s/%s", props.getProperty("postgres_endpoint"), props.getProperty("postgres_database")),
+                            props.getProperty("postgres_user"), props.getProperty("postgres_password"));
 
                     if (!hashtagsText.isEmpty()) {
                         Statement stmt = connection.createStatement();

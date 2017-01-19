@@ -24,7 +24,11 @@ import twitter4j.auth.AuthorizationFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationContext;
 
+import java.util.Properties;
+
 public class TwitterDataCollection {
+    static Properties props = Utilities.loadProperties("config.properties");
+
     public static void main(String[] args) {
         Logger logger = Logger.getLogger(TwitterDataCollection.class.getClass());
         ObjectMapper mapper = new ObjectMapper();
@@ -48,9 +52,9 @@ public class TwitterDataCollection {
 
         twitterStream.foreachRDD( s -> {
             s.foreachPartition( p -> {
-                MongoClient client = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
-                MongoDatabase database = client.getDatabase("twitterDB");
-                MongoCollection<Document> collection = database.getCollection("tweets");
+                MongoClient client = new MongoClient(new MongoClientURI(props.getProperty("mongo_endpoint")));
+                MongoDatabase database = client.getDatabase(props.getProperty("mongo_database"));
+                MongoCollection<Document> collection = database.getCollection(props.getProperty("mongo_collection"));
                 while(p.hasNext()) {
                     Status i = p.next();
                     String stringifiedTweet = mapper.writeValueAsString(i);
