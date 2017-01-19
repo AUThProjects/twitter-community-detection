@@ -13,6 +13,8 @@ hs_err_pid*
 
 # Don't push binaries
 target/*
+# This file contains db tokens
+src/main/resources/twitter4j.properties
 # This file contains twitter tokens
 src/main/resources/twitter4j.properties
 
